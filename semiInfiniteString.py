@@ -45,17 +45,46 @@ def U(x, c, t):  # Construct U(x, t) for a given c
 # %%
 
 
-vfun = np.vectorize(U)
+def Gleft(x, c, t):
+    if x > (c * t):
+        return (-1) * G(x - (c * t), c)
+    else:
+        return (-1) * G((c * t) - x, c)
+
+
+def Gright(x, c, t):
+    if x > (c * t):
+        return G(x + (c * t), c)
+    else:
+        return G((x + (c * t)), c)
+
+
+def Xaxis():
+    return 0
+
+
+wfun = np.vectorize(U)
+lfun = np.vectorize(Gleft)
+rfun = np.vectorize(Gright)
 
 x = np.linspace(0, 6, 1000)  # Plot for positive x values only (semi-infinite)
 # %%
 
-
-for t in [0, 1/4, 1/2, 3/4, 1, 5/4, 3/2]:  # Choose t values to graph
-    y = vfun(x, 2, t)
+#  count = 1
+for t in np.linspace(0, 1.5, 151):
+    y = wfun(x, 2, t)
+    left = lfun(x, 2, t)
+    right = rfun(x, 2, t)
+#    fig = plt.figure()
     plt.plot(x, y)
-    plt.legend(["time t = " + str(t)], loc='lower center')
-    plt.ylabel('u (x,' + str(t) + ")")
+    plt.plot(x, left, color='green', linestyle='dashed')
+    plt.plot(x, right, color='red', linestyle='dashed')
+
+    plt.legend(loc='lower center')
+    plt.ylabel('u (x,' + str(round(t, 2)) + ")")
     plt.xlabel('x')
-    plt.axis([0, 6, -.25, .75])
+    plt.axis([0, 6, -.5, .75])
     plt.show()
+#    print(str(count))
+#    fig.savefig('./semiImages/image' + str(count).zfill(3) + ".png")
+#    count = count + 1
